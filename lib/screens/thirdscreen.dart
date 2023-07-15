@@ -61,17 +61,22 @@ class _ThirdScreenState extends State<ThirdScreen> {
                   padding: EdgeInsets.all(10),
                   itemCount: users?.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      onTap: () {
-                        Navigator.pop(context,'${users?[index].firstName}' + " " +'${users?[index].lastName}');
-                      },
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundImage:
-                            NetworkImage('${users?[index].avatar}'),
-                      ),
-                      title: Text('${users?[index].firstName}' + " " +'${users?[index].lastName}'),
-                      subtitle: Text('${users?[index].email}'),
+                    return Column(
+                      children: [
+                        ListTile(
+                          onTap: () {
+                            Navigator.pop(context,'${users?[index].firstName}' + " " +'${users?[index].lastName}');
+                          },
+                          leading: CircleAvatar(
+                            radius: 30,
+                            backgroundImage:
+                                NetworkImage('${users?[index].avatar}'),
+                          ),
+                          title: Text('${users?[index].firstName}' + " " +'${users?[index].lastName}'),
+                          subtitle: Text('${users?[index].email}'),
+                        ),
+                        Divider()
+                      ],
                     );
                   });
             } else {
