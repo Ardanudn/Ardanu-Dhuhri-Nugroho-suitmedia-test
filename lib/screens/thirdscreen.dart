@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:suitmedia/models/user.dart';
 import 'package:suitmedia/resource/apiService.dart';
 
@@ -11,15 +12,33 @@ class ThirdScreen extends StatefulWidget {
 
 class _ThirdScreenState extends State<ThirdScreen> {
   ApiServices api = ApiServices();
+  int hal = 1;
 
-  Future<List<Data>> userServices() async {
+  Future<List<Data>> userServices({int pages = 1}) async {
     List<Data> userList = [];
-    var response = await api.getUser();
+    var response = await api.getUser(page: pages);
     if (response.containsKey('data') && response['data'] is List) {
       userList =
           (response['data'] as List).map((e) => Data.fromJson(e)).toList();
     }
     return userList;
+  }
+
+  Future<void> refresh({data}) async {
+    List<Data> currentData = await userServices(pages: hal);
+    print("current ${currentData.length}");
+
+    if (currentData.length<4) {
+      setState(() {
+        hal = 1;
+        userServices(pages: hal);
+      });
+    
+    } else {
+      setState(() {
+        userServices(pages: hal += 1);
+      });}
+      
   }
 
   @override
@@ -32,7 +51,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, "Selected User Name");
           },
         ),
         centerTitle: true,
@@ -48,41 +67,52 @@ class _ThirdScreenState extends State<ThirdScreen> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder(
-            future: userServices(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasData) {
+              future: userServices(pages: hal),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                // if (snapshot.data?.length == 0) {
+                  
+                // } else {
                  List<Data>? users = snapshot.data;
-              return ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: users?.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      children: [
-                        ListTile(
-                          onTap: () {
-                            Navigator.pop(context,'${users?[index].firstName}' + " " +'${users?[index].lastName}');
-                          },
-                          leading: CircleAvatar(
-                            radius: 30,
-                            backgroundImage:
-                                NetworkImage('${users?[index].avatar}'),
-                          ),
-                          title: Text('${users?[index].firstName}' + " " +'${users?[index].lastName}'),
-                          subtitle: Text('${users?[index].email}'),
-                        ),
-                        Divider()
-                      ],
-                    );
-                  });
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }}),
-      ),
+                  return RefreshIndicator(
+                    onRefresh: refresh,
+                    child: ListView.builder(
+                        padding: EdgeInsets.all(10),
+                        itemCount: users?.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                onTap: () {
+                                  Navigator.pop(
+                                      context,
+                                      '${users?[index].firstName}' +
+                                          " " +
+                                          '${users?[index].lastName}');
+                                },
+                                leading: CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage:
+                                      NetworkImage('${users?[index].avatar}'),
+                                ),
+                                title: Text('${users?[index].firstName}' +
+                                    " " +
+                                    '${users?[index].lastName}'),
+                                subtitle: Text('${users?[index].email}'),
+                              ),
+                              Divider()
+                            ],
+                          );
+                        }),
+                  );
+                // }
+              }),
+        ),
+      
     );
   }
 }
