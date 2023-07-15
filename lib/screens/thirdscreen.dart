@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:suitmedia/models/user.dart';
 import 'package:suitmedia/resource/apiService.dart';
 

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:suitmedia/models/user.dart';
 
 class ApiServices {
   Dio dio = Dio();
