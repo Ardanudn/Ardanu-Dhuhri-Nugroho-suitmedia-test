@@ -24,7 +24,7 @@ class _FirstScreenState extends State<FirstScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(isPalindrome ? 'Palindrome' : 'Not Palindrome'),
+          title: Text(isPalindrome ? 'isPalindrome' : 'Not Palindrome'),
           actions: [
             TextButton(
               onPressed: () {

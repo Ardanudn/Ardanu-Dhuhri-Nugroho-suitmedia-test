@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:suitmedia/screens/thirdscreen.dart';
 
-class SecondScreen extends StatelessWidget {
+class SecondScreen extends StatefulWidget {
   const SecondScreen({super.key});
 
+  @override
+  State<SecondScreen> createState() => _SecondScreenState();
+}
+
+class _SecondScreenState extends State<SecondScreen> {
+  String username = "Selected User Name";
+
+  void toThirdScreen (BuildContext context) async{
+
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ThirdScreen(),
+        ));
+
+    setState(() {
+      username = result;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +64,7 @@ class SecondScreen extends StatelessWidget {
               ],
             ),
             Center(
-              child: Text("Selected User Name",
+              child: Text("${username}",
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -58,13 +77,7 @@ class SecondScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                         onPressed: () {
-                          Navigator.push<void>(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  const ThirdScreen(),
-                            ),
-                          );
+                          toThirdScreen(context);
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF2B637B),
